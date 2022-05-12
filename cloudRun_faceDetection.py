@@ -12,14 +12,14 @@ def check_image(data):
     file_name = file_data["name"]
     bucket_name = file_data["bucket"]
 
-    blob = storage_client.bucket(bucket_name).get_blob(file_name)
+    # Image path stored in bucket
     blob_uri = f"gs://{bucket_name}/{file_name}"
-    blob_source = vision.Image(source=vision.ImageSource(image_uri=blob_uri))
-
     print(f"Analyzing {file_name}.")
 
+    # Call Vision API
     num_faces = detect_faces(blob_uri)
 
+    # Send Http request to Telegram Bot API
     if num_faces > 0:
         print("telegram msg")
         object_url = f"https://storage.googleapis.com/{bucket_name}/{file_name}"
