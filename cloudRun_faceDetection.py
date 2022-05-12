@@ -7,6 +7,7 @@ client = vision.ImageAnnotatorClient()
 storage_client = storage.Client()
 
 def check_image(data):
+    """Process image and send Telegram msg."""
     file_data = data
 
     file_name = file_data["name"]
@@ -16,7 +17,7 @@ def check_image(data):
     blob_uri = f"gs://{bucket_name}/{file_name}"
     print(f"Analyzing {file_name}.")
 
-    # Call Vision API
+    # Get num faces in image
     num_faces = detect_faces(blob_uri)
 
     # Send Http request to Telegram Bot API
@@ -31,13 +32,12 @@ def check_image(data):
 
 def detect_faces(path):
     """Return number of faces in an image."""
-    from google.cloud import vision
-    import io
     client = vision.ImageAnnotatorClient()
 
     try:
+        # Load image from bucket
         image = vision.Image(source=vision.ImageSource(image_uri=path))
-
+        # Call Vision API (Face Detection)
         response = client.face_detection(image=image)
         faces = response.face_annotations
 
